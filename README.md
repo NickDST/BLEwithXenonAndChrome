@@ -7,7 +7,7 @@ This Project was primarily just used to figure out how to connect Google Chrome 
 <br>
 <br>
 
-Used Resources:
+Used Resources: <br>
 Turning on LED lights with Bluetooth 
 
 - [https://www.jaredwolff.com/how-to-use-particles-powerful-bluetooth-api/](https://www.jaredwolff.com/how-to-use-particles-powerful-bluetooth-api/)
