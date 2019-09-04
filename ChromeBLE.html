@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+</head>
+<body>
+<div style="margin: 20px">
+<br><br>
+  
+  <button class="btn btn-primary" id='connect'> Click me to connect </button>
+
+  <hr>
+
+  <button class="btn btn-success" id='led1on'> Turn on LED 1 </button>
+
+  <button class="btn btn-danger" id='led1off'> Turn off LED 1 </button>
+
+  <hr>
+
+  <button class="btn btn-success" id='led2on'> Turn on LED 2 </button>
+
+  <button class="btn btn-danger" id='led2off'> Turn on LED 2 </button>
+
+
+  
+</div>
+  
+
+
+
+    
+</body>
+
+<script>
+
+//The class for the BLE connection. Obscure name generated from the Boilerplate.
+
+class PlaybulbCandle {
+
+constructor() {
+  this.device = null;
+  this.onDisconnected = this.onDisconnected.bind(this);
+}
+
+//Looking for the particular Uuid from the Particle
+async request() {
+  let options = {
+    "filters": [{
+      services: ['4677062c-ad02-4034-9abf-98581772427c']
+    }],
+    "optionalServices": ["4677062c-ad02-4034-9abf-98581772427c"]
+  };
+  this.device = await navigator.bluetooth.requestDevice(options);
+  if (!this.device) {
+    throw "No device selected";
+  }
+  this.device.addEventListener('gattserverdisconnected', this.onDisconnected);
+}
+
+//Connecting to the Particle
+async connect() {
+  if (!this.device) {
+    return Promise.reject('Device is not connected.');
+  }
+  await this.device.gatt.connect();
+}
+
+//This is unused, but you can use this to read values from the Particle
+async readSomething() {
+  const service = await this.device.gatt.getPrimaryService("4677062c-ad02-4034-9abf-98581772427c");
+  const characteristic = await service.getCharacteristic("dc13b36a-3499-46b0-ac11-5ac0173c4cc5");
+  await characteristic.readValue();
+}
+
+// These are the important methods. Writing to the LED 1 or the LED 2, the only difference
+// between these two methods are the Characteristic Uuids.
+async writeSomethingLED1(data) {
+  const service = await this.device.gatt.getPrimaryService("4677062c-ad02-4034-9abf-98581772427c");
+  const characteristic = await service.getCharacteristic("dc13b36a-3499-46b0-ac11-5ac0173c4cc5");
+  await characteristic.writeValue(data);
+}
+
+async writeSomethingLED2(data) {
+  const service = await this.device.gatt.getPrimaryService("4677062c-ad02-4034-9abf-98581772427c");
+  const characteristic = await service.getCharacteristic("26f260de-0b93-4352-baa3-56b8be1e606a"); //only difference
+  await characteristic.writeValue(data);
+}
+
+//tells you whether or not something has been disconnected
+disconnect() {
+  if (!this.device) {
+    return Promise.reject('Device is not connected.');
+  }
+  return this.device.gatt.disconnect();
+}
+
+onDisconnected() {
+  console.log('Device is disconnected.');
+}
+}
+//************************* class finished
+
+
+//instanitating a new BLE connection object
+var playbulbCandle = new PlaybulbCandle();
+
+
+//standard Javascript getElementbyID click events
+document.getElementById('connect').addEventListener('click', async event => {
+try {
+  await playbulbCandle.request();
+  await playbulbCandle.connect();
+  /* Do something with playbulbCandle... */
+} catch(error) {
+  console.log(error);
+}
+});
+
+
+
+document.getElementById('led1on').addEventListener('click', async event => {
+try {
+  var turnLight = Uint8Array.of(1);
+  await playbulbCandle.writeSomethingLED1(turnLight);
+  console.log("Turning LED 1 On");
+
+  /* Do something with playbulbCandle... */
+} catch(error) {
+  console.log(error);
+}
+});
+
+
+document.getElementById('led1off').addEventListener('click', async event => {
+try {
+  var turnLight = Uint8Array.of(0);
+  await playbulbCandle.writeSomethingLED1(turnLight);
+  console.log("Turning LED 1 Off");
+
+  /* Do something with playbulbCandle... */
+} catch(error) {
+  console.log(error);
+}
+});
+
+
+document.getElementById('led2on').addEventListener('click', async event => {
+try {
+  var turnLight = Uint8Array.of(1);
+  await playbulbCandle.writeSomethingLED2(turnLight);
+  console.log("Turning LED 2 On");
+
+  /* Do something with playbulbCandle... */
+} catch(error) {
+  console.log(error);
+}
+});
+
+
+document.getElementById('led2off').addEventListener('click', async event => {
+try {
+  var turnLight = Uint8Array.of(0);
+  await playbulbCandle.writeSomethingLED2(turnLight);
+  console.log("Turning LED 2 Off");
+
+  /* Do something with playbulbCandle... */
+} catch(error) {
+  console.log(error);
+}
+});
+
+
+</script>
+</html>
