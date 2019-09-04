@@ -3,10 +3,9 @@ Turning on lights by using Bluetooth LE between Particle Xenon and Google Chrome
 
 
 
-
-
-
-
+&nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;  
+&nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;  
+&nbsp;   &nbsp;   &nbsp;   &nbsp;   &nbsp;  
 
 
 Used Resources:
